@@ -140,25 +140,25 @@ jobs:
       
       - name: ⏬ 下载 ImageBuilder
         run: |
-        BUILD_VER="${{ env.VERSION }}"
-        URL="https://downloads.immortalwrt.org/releases/${BUILD_VER}/targets/rockchip/armv8/immortalwrt-imagebuilder-${BUILD_VER}-rockchip-armv8.Linux-x86_64.tar.zst"
-        curl -Lf -o imagebuilder.tar.zst "$URL"
-        tar --use-compress-program=unzstd -xvf imagebuilder.tar.zst
-        mv immortalwrt-imagebuilder-* imagebuilder
+         BUILD_VER="${{ env.VERSION }}"
+         URL="https://downloads.immortalwrt.org/releases/${BUILD_VER}/targets/rockchip/armv8/immortalwrt-imagebuilder-${BUILD_VER}-rockchip-armv8.Linux-x86_64.tar.zst"
+         curl -Lf -o imagebuilder.tar.zst "$URL"
+         tar --use-compress-program=unzstd -xvf imagebuilder.tar.zst
+         mv immortalwrt-imagebuilder-* imagebuilder
 
-    - name: ⏬ 复制必备文件
-      run: |
-        cp rockchip/build_config.sh imagebuilder/
-        cp rockchip/Makefile imagebuilder/
-        cp rockchip/repositories.conf imagebuilder/
-        cp shell/prepare-packages.sh imagebuilder/
-        cp shell/custom-packages.sh imagebuilder/
-        mkdir -p imagebuilder/files/etc/uci-defaults
-        cp files/etc/uci-defaults/99-custom.sh imagebuilder/files/etc/uci-defaults/
-        mkdir -p imagebuilder/files/etc/opkg
-        cp -r files/customfeeds/* imagebuilder/files/etc/opkg/ 2>/dev/null || true
-        # 验证信息
-        ls -l imagebuilder/files/etc/opkg/customfeeds.conf && echo "已拷贝 customfeeds.conf"
+      - name: ⏬ 复制必备文件
+        run: |
+         cp rockchip/build_config.sh imagebuilder/
+         cp rockchip/Makefile imagebuilder/
+         cp rockchip/repositories.conf imagebuilder/
+         cp shell/prepare-packages.sh imagebuilder/
+         cp shell/custom-packages.sh imagebuilder/
+         mkdir -p imagebuilder/files/etc/uci-defaults
+         cp files/etc/uci-defaults/99-custom.sh imagebuilder/files/etc/uci-defaults/
+         mkdir -p imagebuilder/files/etc/opkg
+         cp -r files/customfeeds/* imagebuilder/files/etc/opkg/ 2>/dev/null || true
+         # 验证信息
+         ls -l imagebuilder/files/etc/opkg/customfeeds.conf && echo "已拷贝 customfeeds.conf"
         
       - name: ⚙️ 动态获取 Kmod 哈希并更新配置
         run: |
