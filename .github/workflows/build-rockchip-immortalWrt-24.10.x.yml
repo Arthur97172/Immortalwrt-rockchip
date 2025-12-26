@@ -103,7 +103,7 @@ jobs:
       
       - name: ⚙️ 设置IP、网关和版本号
         run: |
-         CONFIG_PATH="./files/uci-defaults/99-custom.sh"
+         CONFIG_PATH="./files/etc/uci-defaults/99-custom.sh"
          echo "当前网络配置路径: $CONFIG_PATH"
         
          # 1. 替换版本号占位符
