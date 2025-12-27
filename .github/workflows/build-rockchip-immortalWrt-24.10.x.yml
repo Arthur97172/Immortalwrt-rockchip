@@ -210,7 +210,7 @@ jobs:
         uses: softprops/action-gh-release@v2.2.1
         with:
           tag_name: ImmortalWrt-${{ env.VERSION }}-rockship-armv8-RELEASE
-          name: ImmortWrt-Rockchip
+          #name: ImmortWrt-Rockchip
           body_path: ${{ github.workspace }}/router-info.md
           files: |
             imagebuilder/bin/targets/rockchip/armv8/*.img.gz
