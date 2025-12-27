@@ -53,20 +53,46 @@ cat repositories.conf
 # 定义所需安装的包列表
 PACKAGES=""
 
-# --- 核心系统 ---
+# [核心系统]
 PACKAGES="base-files libc libgcc uci ubus dropbear logd mtd opkg bash htop curl wget ca-bundle ca-certificates"
 PACKAGES="$PACKAGES -dnsmasq dnsmasq-full firewall4 nftables kmod-nft-offload"
 PACKAGES="$PACKAGES ip-full ipset iw ppp ppp-mod-pppoe wpad-openssl"
 
-# --- 硬件驱动 (强制去重) ---
+# [硬件驱动 - 板载 PCIe]
+# 强制去重 ath10k 防止冲突；包含 Realtek 板载 2.5G (r8125) 和千兆 (r8169)
 PACKAGES="$PACKAGES -kmod-ath10k-sdio kmod-ath10k"
 PACKAGES="$PACKAGES kmod-ata-ahci kmod-ata-dwc kmod-mmc kmod-r8125 kmod-r8168 kmod-r8169 r8169-firmware"
 
-# --- 磁盘与 USB (增加 alist 依赖的基础库) ---
+# [磁盘与文件系统]
 PACKAGES="$PACKAGES block-mount fdisk lsblk blkid parted resize2fs smartmontools"
 PACKAGES="$PACKAGES kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs3 kmod-fs-exfat kmod-fs-btrfs kmod-fs-f2fs"
 PACKAGES="$PACKAGES kmod-usb-storage kmod-usb-storage-uas kmod-usb2 kmod-usb3"
-PACKAGES="$PACKAGES kmod-usb-net kmod-usb-net-asix-ax88179 kmod-usb-net-rtl8152"
+
+# [增强型 USB 有线网卡驱动 - 支持 100M/1G/2.5G/5G]
+# 支持 RTL8152/8153/8156(2.5G)
+PACKAGES="$PACKAGES kmod-usb-net kmod-usb-net-rtl8150 kmod-usb-net-rtl8152 r8152-firmware"
+# 支持 ASIX AX88179 (主流千兆 USB 网卡)
+PACKAGES="$PACKAGES kmod-usb-net-asix-ax88179"
+# 支持 Aquantia AQC111 (主流 5G USB 网卡)
+PACKAGES="$PACKAGES kmod-usb-net-aqc111"
+# 支持 CDC 协议 (手机 USB 共享、5G 随身 WiFi、通用免驱网卡)
+PACKAGES="$PACKAGES kmod-usb-net-cdc-ether kmod-usb-net-cdc-ncm kmod-usb-net-cdc-mbim"
+
+
+# --- 核心系统 ---
+#PACKAGES="base-files libc libgcc uci ubus dropbear logd mtd opkg bash htop curl wget ca-bundle ca-certificates"
+#PACKAGES="$PACKAGES -dnsmasq dnsmasq-full firewall4 nftables kmod-nft-offload"
+#PACKAGES="$PACKAGES ip-full ipset iw ppp ppp-mod-pppoe wpad-openssl"
+
+# --- 硬件驱动 (强制去重) ---
+#PACKAGES="$PACKAGES -kmod-ath10k-sdio kmod-ath10k"
+#PACKAGES="$PACKAGES kmod-ata-ahci kmod-ata-dwc kmod-mmc kmod-r8125 kmod-r8168 kmod-r8169 r8169-firmware"
+
+# --- 磁盘与 USB (增加 alist 依赖的基础库) ---
+#PACKAGES="$PACKAGES block-mount fdisk lsblk blkid parted resize2fs smartmontools"
+#PACKAGES="$PACKAGES kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs3 kmod-fs-exfat kmod-fs-btrfs kmod-fs-f2fs"
+#PACKAGES="$PACKAGES kmod-usb-storage kmod-usb-storage-uas kmod-usb2 kmod-usb3"
+#PACKAGES="$PACKAGES kmod-usb-net kmod-usb-net-asix-ax88179 kmod-usb-net-rtl8152"
 
 # --- 核心应用界面 ---
 PACKAGES="$PACKAGES luci luci-base luci-compat luci-mod-admin-full luci-theme-argon"
