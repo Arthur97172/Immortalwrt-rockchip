@@ -41,30 +41,30 @@ cat repositories.conf
 # 定义所需安装的包列表
 PACKAGES=""
 
-# --- 基础系统与核心依赖 (删除了不存在的 info 和 ethertypes) ---
-PACKAGES="base-files libc libgcc uci ubus dropbear logd mtd opkg bash htop curl wget-ssl ca-bundle ca-certificates"
+# --- 基础系统 (wget-ssl 改为 wget-https) ---
+PACKAGES="base-files libc libgcc uci ubus dropbear logd mtd opkg bash htop curl wget-https ca-bundle ca-certificates"
 
-# --- 磁盘与文件系统支撑 ---
+# --- 磁盘支持 (移除了 luci-app-diskman 极其依赖，保留底层工具) ---
 PACKAGES="$PACKAGES block-mount fdisk lsblk blkid parted resize2fs smartmontools"
 PACKAGES="$PACKAGES kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs3 kmod-fs-exfat kmod-fs-btrfs kmod-fs-f2fs kmod-fs-nfs kmod-fs-nfsd"
 PACKAGES="$PACKAGES kmod-usb-storage kmod-usb-storage-uas kmod-usb-ohci kmod-usb-uhci kmod-usb2 kmod-usb3"
 
-# --- 瑞芯微硬件相关驱动 (删除了报错的 kmod-dwmac-rockchip，该驱动已内置在内核) ---
+# --- 瑞芯微核心驱动 ---
 PACKAGES="$PACKAGES kmod-ata-ahci kmod-ata-dwc kmod-mmc kmod-r8125 kmod-r8168 kmod-r8169"
 
-# --- 增强型 USB 有线网卡支持 ---
-PACKAGES="$PACKAGES kmod-usb-net kmod-usb-net-asix-ax88179 kmod-usb-net-rtl8150 kmod-usb-net-rtl8152 r8152-firmware"
+# --- USB 网卡 (移除了 r8152-firmware 以防冲突) ---
+PACKAGES="$PACKAGES kmod-usb-net kmod-usb-net-asix-ax88179 kmod-usb-net-rtl8150 kmod-usb-net-rtl8152"
 PACKAGES="$PACKAGES kmod-usb-net-cdc-ether kmod-usb-net-cdc-mbim kmod-usb-net-cdc-ncm kmod-usb-net-qmi-wwan"
 
-# --- 增强型 USB/板载 无线网卡支持 (严格确保不包含 kmod-ath10k-sdio 以免文件冲突) ---
+# --- 无线支持 ---
 PACKAGES="$PACKAGES kmod-rtw88-8822ce kmod-rtw88-8821ce kmod-rtw88-8821cu kmod-rtw88-8822cu"
 PACKAGES="$PACKAGES kmod-mt7921e kmod-mt7921u kmod-mt76x2u kmod-ath10k"
 
 # --- 网络核心 ---
 PACKAGES="$PACKAGES -dnsmasq dnsmasq-full firewall4 nftables kmod-nft-offload"
-PACKAGES="$PACKAGES ip-full ipset iw ppp ppp-mod-pppoe"
+PACKAGES="$PACKAGES ip-full ipset iw ppp ppp-mod-pppoe wpad-openssl"
 
-# --- 应用层与常用插件 (删除了 Docker 相关的硬编码，由下方的 if 统一控制) ---
+# --- 应用层与常用插件 (删除了 diskman，由 luci-app-samba4 等提供核心功能) ---
 PACKAGES="$PACKAGES luci luci-base luci-compat luci-mod-admin-full"
 PACKAGES="$PACKAGES luci-theme-argon luci-app-argon-config luci-i18n-argon-config-zh-cn"
 PACKAGES="$PACKAGES luci-app-cpufreq luci-i18n-cpufreq-zh-cn"
@@ -73,9 +73,7 @@ PACKAGES="$PACKAGES luci-app-samba4 luci-i18n-samba4-zh-cn"
 PACKAGES="$PACKAGES luci-app-upnp luci-i18n-upnp-zh-cn"
 PACKAGES="$PACKAGES luci-app-wol luci-i18n-wol-zh-cn"
 PACKAGES="$PACKAGES luci-app-ddns luci-i18n-ddns-zh-cn"
-PACKAGES="$PACKAGES luci-app-diskman luci-i18n-diskman-zh-cn"
 PACKAGES="$PACKAGES luci-app-hd-idle luci-i18n-hd-idle-zh-cn"
-PACKAGES="$PACKAGES wpad-openssl"
 
 # --- Docker 逻辑修正 ---
 if [ "$INCLUDE_DOCKER" = "yes" ]; then
