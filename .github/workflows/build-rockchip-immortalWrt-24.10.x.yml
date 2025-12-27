@@ -202,6 +202,9 @@ jobs:
             echo "❌ 无法获取 Kmod 哈希，请检查版本是否发布"
             exit 1
           fi
+          echo "--- 检查更新后的 repositories.conf ---"
+          cat imagebuilder/repositories.conf | grep "https"
+
 
       - name: 🧱 构建ImmortalWrt固件
         working-directory: ./imagebuilder
