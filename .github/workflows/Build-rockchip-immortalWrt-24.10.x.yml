@@ -72,15 +72,7 @@ on:
         description: '设置软件包大小 单位(MB)'
         required: true
         default: '1024'
-      include_docker:
-        description: |
-          是否编译 Docker 插件
-        required: true
-        default: 'no'
-        type: choice
-        options:
-          - 'yes'
-          - 'no'
+
 env:
   VERSION: ${{ inputs.luci_version }}
   
@@ -192,8 +184,8 @@ jobs:
       - name: 🧱 构建ImmortalWrt固件
         working-directory: ./imagebuilder
         run: |
-          # 按照脚本需要的顺序传入：型号、大小、是否包含Docker
-          bash ./build_config.sh "${{ inputs.profile }}" "${{ inputs.rootfs_partsize }}" "${{ inputs.include_docker }}"
+          # 按照脚本需要的顺序传入：型号、大小
+          bash ./build_config.sh "${{ inputs.profile }}" "${{ inputs.rootfs_partsize }}"
          
       - name: 📜 生成发布说明
         run: |
@@ -204,7 +196,6 @@ jobs:
           🏠 后台地址： ${{ github.event.inputs.custom_router_ip }}
           👤 用户名： root
           🔑 密码： 无
-          📜 Docker状态： ${{ inputs.include_docker == 'yes' && '已集成' || '未集成' }}  
           EOF
 
       - name: 🚀 上传到 Release
