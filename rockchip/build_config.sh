@@ -41,31 +41,34 @@ cat repositories.conf
 # 定义所需安装的包列表
 PACKAGES=""
 
-# --- 基础系统与网络核心 (保持最小化运行) ---
+# --- 核心系统 ---
 PACKAGES="base-files libc libgcc uci ubus dropbear logd mtd opkg bash htop curl wget ca-bundle ca-certificates"
 PACKAGES="$PACKAGES -dnsmasq dnsmasq-full firewall4 nftables kmod-nft-offload"
 PACKAGES="$PACKAGES ip-full ipset iw ppp ppp-mod-pppoe wpad-openssl"
 
-# --- 硬件驱动 (保留核心驱动，强制踢出冲突包) ---
+# --- 硬件驱动 (强制去重) ---
 PACKAGES="$PACKAGES -kmod-ath10k-sdio kmod-ath10k"
-PACKAGES="$PACKAGES kmod-ata-ahci kmod-ata-dwc kmod-mmc kmod-r8125 kmod-r8168 kmod-r8169"
+PACKAGES="$PACKAGES kmod-ata-ahci kmod-ata-dwc kmod-mmc kmod-r8125 kmod-r8168 kmod-r8169 r8169-firmware"
 
-# --- 磁盘与扩展支持 ---
+# --- 磁盘与 USB (增加 alist 依赖的基础库) ---
 PACKAGES="$PACKAGES block-mount fdisk lsblk blkid parted resize2fs smartmontools"
 PACKAGES="$PACKAGES kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs3 kmod-fs-exfat kmod-fs-btrfs kmod-fs-f2fs"
-PACKAGES="$PACKAGES kmod-usb-storage kmod-usb-storage-uas kmod-usb-ohci kmod-usb-uhci kmod-usb2 kmod-usb3"
-PACKAGES="$PACKAGES kmod-usb-net kmod-usb-net-asix-ax88179 kmod-usb-net-rtl8150 kmod-usb-net-rtl8152"
+PACKAGES="$PACKAGES kmod-usb-storage kmod-usb-storage-uas kmod-usb2 kmod-usb3"
+PACKAGES="$PACKAGES kmod-usb-net kmod-usb-net-asix-ax88179 kmod-usb-net-rtl8152"
 
-# --- 已全部注释的应用层与常用插件 ---
-# PACKAGES="$PACKAGES luci luci-base luci-compat luci-mod-admin-full"
-# PACKAGES="$PACKAGES luci-theme-argon luci-app-argon-config luci-i18n-argon-config-zh-cn"
-# PACKAGES="$PACKAGES luci-app-cpufreq luci-i18n-cpufreq-zh-cn"
-# PACKAGES="$PACKAGES luci-app-ttyd luci-i18n-ttyd-zh-cn"
-# PACKAGES="$PACKAGES luci-app-samba4 luci-i18n-samba4-zh-cn"
-# PACKAGES="$PACKAGES luci-app-upnp luci-i18n-upnp-zh-cn"
-# PACKAGES="$PACKAGES luci-app-wol luci-i18n-wol-zh-cn"
-# PACKAGES="$PACKAGES luci-app-ddns luci-i18n-ddns-zh-cn"
-# PACKAGES="$PACKAGES luci-app-hd-idle luci-i18n-hd-idle-zh-cn"
+# --- 核心应用界面 ---
+PACKAGES="$PACKAGES luci luci-base luci-compat luci-mod-admin-full luci-theme-argon"
+PACKAGES="$PACKAGES luci-app-argon-config luci-i18n-argon-config-zh-cn"
+PACKAGES="$PACKAGES luci-app-cpufreq luci-i18n-cpufreq-zh-cn luci-app-ttyd luci-i18n-ttyd-zh-cn"
+
+# --- 功能插件 (基于你的配置) ---
+PACKAGES="$PACKAGES luci-app-alist alist"
+PACKAGES="$PACKAGES luci-app-aria2 aria2 ariang"
+PACKAGES="$PACKAGES luci-app-samba4 luci-i18n-samba4-zh-cn"
+PACKAGES="$PACKAGES luci-app-upnp luci-i18n-upnp-zh-cn"
+PACKAGES="$PACKAGES luci-app-wol luci-i18n-wol-zh-cn"
+PACKAGES="$PACKAGES luci-app-ddns luci-i18n-ddns-zh-cn"
+PACKAGES="$PACKAGES luci-app-hd-idle luci-i18n-hd-idle-zh-cn"
 
 # --- Docker 逻辑 ---
 if [ "$INCLUDE_DOCKER" = "yes" ]; then
