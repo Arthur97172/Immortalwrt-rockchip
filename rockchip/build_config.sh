@@ -5,12 +5,10 @@
 # $1, $2 是执行脚本时后面跟着的参数
 PROFILE=${1:-"friendlyarm_nanopi-r3s"}      # 如果没传，默认 r3s
 ROOTFS_PARTSIZE=${2:-"1024"}                 # 如果没传，默认 1024
-INCLUDE_DOCKER=${3:-"no"}                    # 如果没传，默认 no
 
 # 验证收到的参数
 echo "Target Profile: $PROFILE"
 echo "Rootfs Size: $ROOTFS_PARTSIZE"
-echo "Docker Support: $INCLUDE_DOCKER"
 
 source shell/custom-packages.sh
 echo "第三方软件包: $CUSTOM_PACKAGES"
@@ -91,14 +89,6 @@ PACKAGES="$PACKAGES luci-app-upnp luci-i18n-upnp-zh-cn"
 PACKAGES="$PACKAGES luci-app-wol luci-i18n-wol-zh-cn"
 PACKAGES="$PACKAGES luci-app-ddns luci-i18n-ddns-zh-cn"
 PACKAGES="$PACKAGES luci-app-hd-idle luci-i18n-hd-idle-zh-cn"
-
-# --- Docker 逻辑修正 ---
-if [ "$INCLUDE_DOCKER" = "yes" ]; then
-    # 尝试安装 docker-ce，如果源里只有 docker，它会自动处理
-    # 删除了 docker-compose，因为它会导致架构不匹配报错
-    PACKAGES="$PACKAGES docker-ce dockerd luci-app-dockerman luci-i18n-dockerman-zh-cn luci-lib-docker"
-    echo "Adding Docker support..."
-fi
 
 # 文件管理器
 PACKAGES="$PACKAGES luci-i18n-filemanager-zh-cn"
