@@ -192,7 +192,8 @@ jobs:
       - name: 🧱 构建ImmortalWrt固件
         working-directory: ./imagebuilder
         run: |
-         bash ./build_config.sh
+          # 按照脚本需要的顺序传入：型号、大小、是否包含Docker
+          bash ./build_config.sh "${{ inputs.profile }}" "${{ inputs.rootfs_partsize }}" "${{ inputs.include_docker }}"
          
       - name: 📜 生成发布说明
         run: |
