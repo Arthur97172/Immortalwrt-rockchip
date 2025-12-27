@@ -193,7 +193,7 @@ jobs:
           ## 📡 路由器后台信息
 
           ✳️ 软路由型号： ImmortalWrt-${{ env.VERSION }}-rockship-armv8
-          🏠 后台地址： ${{ github.event.inputs.custom_router_ip }}
+          🏠 后台地址： ${{ github.event.inputs.ipaddr }}
           👤 用户名： root
           🔑 密码： 无
           EOF
