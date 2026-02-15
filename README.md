@@ -40,7 +40,7 @@
 | mmbox    | mmbox_anas3035 |
 | nlnet   | nlnet_xiguapi-v3 |
 | pine64    | pine64_rock64, pine64_rockpro64 |
-| radxa   | radxa_cm3-io, radxa_e25, radxa_rock-3a, radxa_rock-3b, radxa_rock-3c, radxa_rock-4c-plus, radxa_rock-4se, radxa_rock-5a, radxa_rock-5b, radxa_rock-5c, radxa_rock-5t, radxa_rock-pi-4a, radxa_rock-pi-e, radxa_rock-pi-s, radxa_zero-3e, radxa_zero-3w |
+| radxa   | radxa_cm3-io, radxa_e25, radxa_rock-3a, radxa_rock-3b, radxa_rock-3c, radxa_rock-4c-plus, radxa_rock-4se, radxa_rock-5-itx, radxa_rock-5a, radxa_rock-5b, radxa_rock-5c, radxa_rock-5t, radxa_rock-pi-4a, radxa_rock-pi-e, radxa_rock-pi-s, radxa_zero-3e, radxa_zero-3w |
 | sinovoip   | sinovoip_bpi-r2-pro |
 | xunlong    | xunlong_orangepi-5, xunlong_orangepi-5-plus, xunlong_orangepi-r1-plus, xunlong_orangepi-r1-plus-lts |
 
