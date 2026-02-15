@@ -20,6 +20,11 @@ on:
         description: |
           输入 软路由型号 可选值如下：
         options:
+          - all
+          - first50
+          - range50_100
+          - range100_150
+          - last20        
           - 9tripod_x3568-v4
           - ariaboard_photonicat
           - armsom_sige3
