@@ -19,12 +19,7 @@ on:
         type: choice
         description: |
           输入 软路由型号 可选值如下：
-        options:
-          - all
-          - first50
-          - range50_100
-          - range100_150
-          - last20        
+        options:     
           - 9tripod_x3568-v4
           - ariaboard_photonicat
           - armsom_sige3
@@ -80,7 +75,7 @@ on:
           - xunlong_orangepi-r1-plus
           - xunlong_orangepi-r1-plus-lts
         required: true
-        default: 'all'
+        default: 'radxa_rock-5-itx'
       ipaddr:
         description: "请设置软路由的管理地址(注意仅对多网口软路由有效) 格式:192.168.x.1 或 10.x.x.1"
         required: true
