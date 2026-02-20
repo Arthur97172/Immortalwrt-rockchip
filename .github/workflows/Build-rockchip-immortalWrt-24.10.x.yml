@@ -128,8 +128,7 @@ jobs:
       - name: ⏬ 下载 ImageBuilder
         run: |
          BUILD_VER="${{ env.VERSION }}"
-         #URL="https://downloads.immortalwrt.org/releases/${BUILD_VER}/targets/rockchip/armv8/immortalwrt-imagebuilder-${BUILD_VER}-rockchip-armv8.Linux-x86_64.tar.zst"
-         URL="https://mirrors.cernet.edu.cn/immortalwrt/releases/${BUILD_VER}/targets/rockchip/armv8/immortalwrt-imagebuilder-${BUILD_VER}-rockchip-armv8.Linux-x86_64.tar.zst"
+         URL="https://downloads.immortalwrt.org/releases/${BUILD_VER}/targets/rockchip/armv8/immortalwrt-imagebuilder-${BUILD_VER}-rockchip-armv8.Linux-x86_64.tar.zst"
          curl -Lf -o imagebuilder.tar.zst "$URL"
          tar --use-compress-program=unzstd -xvf imagebuilder.tar.zst
          mv immortalwrt-imagebuilder-* imagebuilder
@@ -167,8 +166,7 @@ jobs:
         run: |
           BUILD_VER="${{ env.VERSION }}"
           # 确保这里的路径也是 rockchip/armv8
-          #BASE_URL="https://downloads.immortalwrt.org/releases/${BUILD_VER}/targets/rockchip/armv8/kmods/"
-          BASE_URL="https://mirrors.cernet.edu.cn/immortalwrt/releases/${BUILD_VER}/targets/rockchip/armv8/kmods/"
+          BASE_URL="https://downloads.immortalwrt.org/releases/${BUILD_VER}/targets/rockchip/armv8/kmods/"
         
           echo "正在从 $BASE_URL 获取最新的内核哈希..."
           # 获取带 hash 的目录名，例如 6.6.110-1-xxxx...
