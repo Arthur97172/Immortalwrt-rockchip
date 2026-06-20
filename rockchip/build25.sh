@@ -61,7 +61,7 @@ PACKAGES="$PACKAGES kmod-mt7992-23-firmware kmod-mt7992-firmware"
 PACKAGES="$PACKAGES kmod-mt7996-233-firmware kmod-mt7996-firmware kmod-mt7996-firmware-common kmod-mt7996e kmod-mtk-t7xx"
 
 # [Web 界面]
-PACKAGES="$PACKAGES luci luci-base luci-compat luci-mod-admin-full luci-theme-argon"
+PACKAGES="$PACKAGES luci luci-base luci-i18n-base-zh-cn luci-mod-admin-full luci-theme-argon"
 PACKAGES="$PACKAGES luci-app-argon-config luci-i18n-argon-config-zh-cn"
 PACKAGES="$PACKAGES luci-app-cpufreq luci-i18n-cpufreq-zh-cn"
 PACKAGES="$PACKAGES luci-app-ttyd luci-i18n-ttyd-zh-cn"
@@ -71,8 +71,8 @@ PACKAGES="$PACKAGES luci-app-samba4 luci-i18n-samba4-zh-cn"
 PACKAGES="$PACKAGES luci-app-upnp luci-i18n-upnp-zh-cn"
 PACKAGES="$PACKAGES luci-app-wol luci-i18n-wol-zh-cn"
 PACKAGES="$PACKAGES luci-app-ddns luci-i18n-ddns-zh-cn"
-PACKAGES="$PACKAGES luci-app-hd-idle luci-i18n-hd-idle-zh-cn"
-PACKAGES="$PACKAGES luci-i18n-filemanager-zh-cn luci-i18n-dufs-zh-cn"
+PACKAGES="$PACKAGES luci-app-passwall luci-i18n-passwall-zh-cn"
+PACKAGES="$PACKAGES luci-app-package-manager luci-i18n-package-manager-zh-cn"
 
 # 只将第三方插件纳入 PACKAGES 列表（核心包来自 ImageBuilder 捆绑包）
 PACKAGES="$CUSTOM_PACKAGES"
