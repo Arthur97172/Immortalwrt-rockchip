@@ -156,7 +156,7 @@ jobs:
           [ -d "custom" ] && cp -r custom/* imagebuilder/files/etc/config/ 2>/dev/null || true
 
           # 5. 拷贝自定义软件源 (feeds)
-          cp -r files/customfeeds/* imagebuilder/files/etc/opkg/ 2>/dev/null || true
+          cp -f files/customfeeds/24.customfeeds.conf imagebuilder/files/etc/opkg/customfeeds.conf 2>/dev/null || true
         
           # 6. 验证关键文件是否存在
           echo "--- 验证拷贝结果 ---"
