@@ -21,7 +21,7 @@ if [ -z "$CUSTOM_PACKAGES" ]; then
   echo "⚪️ 未选择 任何第三方软件包"
 else
   echo "🔄 正在同步第三方软件仓库..."
-  git clone --depth=1 https://github.com/wukongdaily/store.git /tmp/store-repo
+  git clone --depth=1 https://github.com/wukongdaily/apk.git /tmp/store-repo
 
   mkdir -p /home/build/immortalwrt/extra-packages
   cp -r /tmp/store-repo/run/arm64/* /home/build/immortalwrt/extra-packages/
