@@ -99,31 +99,71 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set executable permissions
-        run: chmod +x ${{ github.workspace }}/rockchip/build25.sh
-
-      - name: ⚙️ Set custom IP config
+      - name: ⚙️ 设置可执行权限
         run: |
-          sed -i "s/版本号/${{ inputs.luci_version }}/g" files/etc/uci-defaults/99-custom.sh
-          sed -i "s/__IPADDR__/${{ inputs.ipaddr }}/g" files/etc/uci-defaults/99-custom.sh
-          sed -i "s/VERXXXX/${{ inputs.luci_version }}/g" files/etc/uci-defaults/99-custom.sh
+          chmod +x x86/build25.sh
+          chmod +x shell/prepare-packages.sh
+          chmod +x shell/apk-custom-packages.sh
+
+      - name: 🛠️ 安装依赖
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-utils genisoimage
+
+      - name: ⚙️ 设置IP、版本号
+        run: |
+          sed -i "s/版本号/${{ inputs.luci_version }}/g" files/uci-defaults/99-custom.sh
+          sed -i "s/__IPADDR__/${{ inputs.ipaddr }}/g" files/uci-defaults/99-custom.sh
+          sed -i "s/VERXXXX/${{ inputs.luci_version }}/g" files/uci-defaults/99-custom.sh
           echo "✅ 配置修改完成"
 
-      - name: 🔨 Building Rockchip ImmortalWrt 25.12.x
+      - name: ⏬ 下载 ImmortalWrt ImageBuilder 25.12.x
         run: |
-          docker run --rm -i \
-            --user root \
-            -v "${{ github.workspace }}/bin:/home/build/immortalwrt/bin" \
-            -v "${{ github.workspace }}/rockchip:/home/build/immortalwrt/rockchip" \
-            -v "${{ github.workspace }}/shell:/home/build/immortalwrt/shell" \
-            -v "${{ github.workspace }}/files:/home/build/immortalwrt/files" \
-            -e INCLUDE_DOCKER=${{ inputs.include_docker }} \
-            -e PROFILE=${{ inputs.profile }} \
-            -e ROOTFS_PARTSIZE=${{ inputs.rootfs_partsize }} \
-            immortalwrt/imagebuilder:rockchip-armv8-openwrt-${{ inputs.luci_version }} \
-            /bin/bash /home/build/immortalwrt/rockchip/build25.sh
+          BUILD_VER="${{ inputs.luci_version }}"
+          URL="https://downloads.immortalwrt.org/releases/${BUILD_VER}/targets/rockchip/armv8/immortalwrt-imagebuilder-${BUILD_VER}-x86-64.Linux-x86_64.tar.zst"
+          curl -Lf -o imagebuilder.tar.zst "$URL"
+          tar --use-compress-program=unzstd -xvf imagebuilder.tar.zst
+          mv immortalwrt-imagebuilder-* imagebuilder
 
-      - name: 📜 Generate release info
+      - name: 🔄 复制必备文件
+        run: |
+          cp rockchip/build25.sh imagebuilder/
+          cp rockchip/repositories imagebuilder/
+          cp shell/prepare-packages.sh imagebuilder/
+          cp shell/apk-custom-packages.sh imagebuilder/
+          mkdir -p imagebuilder/files/etc/uci-defaults imagebuilder/files/etc/apk
+          cp files/uci-defaults/99-custom.sh imagebuilder/files/etc/uci-defaults/
+          # 追加自定义源到 APK repositories（FIRMWARE 内 /etc/apk/repositories 会用这个）
+          cat files/customfeeds/25.customfeeds.conf >> imagebuilder/files/etc/apk/repositories
+          echo "✅ 文件准备完成"
+
+      - name: ⚙️ 动态获取 Kmod 哈希并更新配置
+        run: |
+          BUILD_VER="${{ inputs.luci_version }}"
+          BASE_URL="https://downloads.immortalwrt.org/releases/${BUILD_VER}/targets/rockchip/armv8/kmods/"
+          echo "正在从 $BASE_URL 获取最新的内核哈希..."
+          KMOD_DIR=$(curl -sL $BASE_URL | grep -oE "[0-9.-]+-[a-f0-9]{32}" | head -n 1)
+          if [ -n "$KMOD_DIR" ]; then
+            FULL_KMOD_URL="${BASE_URL}${KMOD_DIR}/packages.adb"
+            echo "✅ 成功匹配 kmods 路径: $FULL_KMOD_URL"
+            # 替换 repositories 文件中的占位符
+            sed -i "s|VERSION_PLACEHOLDER|${BUILD_VER}|g" imagebuilder/repositories
+            sed -i "s|KMOD_PLACEHOLDER|${FULL_KMOD_URL}|g" imagebuilder/repositories
+          else
+            echo "❌ 无法获取 Kmod 哈希"
+            exit 1
+          fi
+          cat imagebuilder/repositories
+
+      - name: 🧱 构建 ImmortalWrt 25.12.x 固件
+        working-directory: ./imagebuilder
+        env:
+          INCLUDE_DOCKER: ${{ inputs.include_docker }}
+          ROOTFS_PARTSIZE: ${{ inputs.rootfs_partsize }}
+        run: |
+          bash ./build25.sh
+
+      - name: 📜 生成发布说明
         run: |
           cat > ${{ github.workspace }}/router-info.md <<EOF
           ## 📡 路由器后台信息
@@ -134,15 +174,14 @@ jobs:
           🐳 Docker状态： ${{ inputs.include_docker == 'yes' && '已集成' || '未集成' }}
           EOF
 
-      - name: 🚀 Upload to Release
+      - name: 🚀 上传到 Release
         uses: softprops/action-gh-release@v2.2.1
         with:
-          tag_name: ImmortalWrt-${{ inputs.luci_version }}-rockship-armv8-RELEASE-Dokcer-${{ inputs.include_docker }}
-          #name: ImmortWrt-Rockchip
+          tag_name: ImmortalWrt-${{ inputs.luci_version }}-rockship-armv8-RELEASE-Docker-${{ inputs.include_docker }}
           body_path: ${{ github.workspace }}/router-info.md
-          overwrite: true
           files: |
-            bin/targets/rockchip/armv8/*.img.gz
+            imagebuilder/bin/targets/rockchip/armv84/*squashfs-combined-efi.img.gz
+            imagebuilder/bin/targets/rockchip/armv8/sha256sums
           token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
