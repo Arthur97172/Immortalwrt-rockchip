@@ -177,7 +177,7 @@ jobs:
       - name: 🚀 上传到 Release
         uses: softprops/action-gh-release@v2.2.1
         with:
-          tag_name: ImmortalWrt-${{ inputs.luci_version }}-rockship-armv8-RELEASE-Docker-${{ inputs.include_docker }}
+          tag_name: ImmortalWrt-${{ inputs.luci_version }}-rockchip-armv8-RELEASE-Docker-${{ inputs.include_docker }}
           body_path: ${{ github.workspace }}/router-info.md
           files: |
             imagebuilder/bin/targets/rockchip/armv84/*squashfs-combined-efi.img.gz
