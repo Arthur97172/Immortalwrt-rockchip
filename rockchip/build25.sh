@@ -26,6 +26,30 @@ else
     echo "⚪️ 未找到 25.customfeeds.conf，跳过"
 fi
 
+# 定义所需安装的包列表
+PACKAGES=""
+
+# [磁盘与文件系统]
+PACKAGES="$PACKAGES block-mount fdisk lsblk blkid parted resize2fs smartmontools"
+PACKAGES="$PACKAGES kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs3 kmod-fs-exfat kmod-fs-btrfs kmod-fs-f2fs"
+PACKAGES="$PACKAGES kmod-usb-storage kmod-usb-storage-uas kmod-usb2 kmod-usb3"
+
+# [USB 网卡驱动]
+PACKAGES="$PACKAGES kmod-usb-net kmod-usb-net-rtl8150 kmod-usb-net-rtl8152 r8152-firmware"
+PACKAGES="$PACKAGES kmod-usb-net-asix-ax88179 kmod-usb-net-aqc111"
+PACKAGES="$PACKAGES kmod-usb-net-cdc-ether kmod-usb-net-cdc-ncm kmod-usb-net-cdc-mbim"
+
+# [无线驱动]
+PACKAGES="$PACKAGES kmod-brcmfmac kmod-brcmsmac"
+PACKAGES="$PACKAGES brcmfmac-firmware-usb brcmfmac-firmware-43430-sdio brcmfmac-firmware-43455-sdio"
+PACKAGES="$PACKAGES kmod-usb-ohci kmod-usb-ohci-pci kmod-usb-core kmod-usb2-pci usbutils"
+PACKAGES="$PACKAGES kmod-mac80211"
+PACKAGES="$PACKAGES kmod-mt7921-common kmod-mt7921-firmware kmod-mt7921e kmod-mt7921u"
+PACKAGES="$PACKAGES kmod-mt7922-firmware kmod-mt7925-common kmod-mt7925-firmware kmod-mt7925e kmod-mt7925u"
+PACKAGES="$PACKAGES kmod-mt792x-common kmod-mt792x-usb"
+PACKAGES="$PACKAGES kmod-mt7992-23-firmware kmod-mt7992-firmware"
+PACKAGES="$PACKAGES kmod-mt7996-233-firmware kmod-mt7996-firmware kmod-mt7996-firmware-common kmod-mt7996e kmod-mtk-t7xx"
+
 # 只将第三方插件纳入 PACKAGES 列表（核心包来自 ImageBuilder 捆绑包）
 PACKAGES="$CUSTOM_PACKAGES"
 
