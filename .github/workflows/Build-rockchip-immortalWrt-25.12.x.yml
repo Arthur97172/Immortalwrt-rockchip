@@ -130,7 +130,7 @@ jobs:
           body_path: ${{ github.workspace }}/router-info.md
           overwrite: true
           files: |
-            imagebuilder/bin/targets/rockchip/armv8/*.img.gz
+            bin/targets/rockchip/armv8/*.img.gz
           token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
