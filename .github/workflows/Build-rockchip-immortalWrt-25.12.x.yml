@@ -180,7 +180,7 @@ jobs:
           tag_name: ImmortalWrt-${{ inputs.luci_version }}-rockchip-armv8-RELEASE-Docker-${{ inputs.include_docker }}
           body_path: ${{ github.workspace }}/router-info.md
           files: |
-            imagebuilder/bin/targets/rockchip/armv84/*squashfs-combined-efi.img.gz
+            imagebuilder/bin/targets/rockchip/armv8/*squashfs-combined-efi.img.gz
             imagebuilder/bin/targets/rockchip/armv8/sha256sums
           token: ${{ secrets.GITHUB_TOKEN }}
         env:
