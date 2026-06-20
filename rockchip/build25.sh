@@ -16,22 +16,29 @@ echo "第三方软件包: $CUSTOM_PACKAGES"
 echo "Building for profile: $PROFILE"
 echo "Building for ROOTFS_PARTSIZE: $ROOTFS_PARTSIZE"
 
-# 若有第三方插件则下载并准备
-if [ -z "$CUSTOM_PACKAGES" ]; then
-  echo "⚪️ 未选择 任何第三方软件包"
+# 加载第三方插件配置（使用 25.12 配置）
+source apk-custom-packages.sh
+echo "第三方软件包: $CUSTOM_PACKAGES"
+
+# 同步第三方仓库
+echo "$(date '+%Y-%m-%d %H:%M:%S') - 同步第三方软件仓库..."
+git clone --depth=1 https://github.com/wukongdaily/apk.git /tmp/store-repo
+
+mkdir -p extra-packages
+mkdir -p packages
+
+# 复制 arm64 的 .run 文件
+if [ -d "/tmp/store-repo/run/arm64" ]; then
+    cp -r /tmp/store-repo/run/arm64/* extra-packages/
+    echo "✅ Run files copied:"
+    ls -lh extra-packages/*.run 2>/dev/null || echo "无 run 文件"
 else
-  echo "🔄 正在同步第三方软件仓库..."
-  git clone --depth=1 https://github.com/wukongdaily/apk.git /tmp/store-repo
+    echo "⚪️ 无 arm64 专用 run 文件"
+fi
 
-  mkdir -p /home/build/immortalwrt/extra-packages
-  cp -r /tmp/store-repo/run/arm64/* /home/build/immortalwrt/extra-packages/
-
-  echo "✅ Run files copied to extra-packages:"
-  ls -lh /home/build/immortalwrt/extra-packages/*.run 2>/dev/null || echo "无 run 文件"
-
-  # 解压并拷贝 apk/ipk 到 packages 目录
-  sh shell/prepare-packages.sh
-  ls -lah /home/build/immortalwrt/packages/
+# 解压并拷贝 apk/ipk
+sh prepare-packages.sh
+ls -lah packages/ | tail -5
 
   # 复制 25.12.x 自定义源配置进固件
   if [ -f "files/customfeeds/25.customfeeds.conf" ]; then
