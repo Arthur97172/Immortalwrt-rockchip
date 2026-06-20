@@ -32,6 +32,15 @@ else
   sh shell/prepare-packages.sh
   ls -lah /home/build/immortalwrt/packages/
 
+  # 复制 25.12.x 自定义源配置进固件
+  if [ -f "files/customfeeds/25.customfeeds.conf" ]; then
+      mkdir -p files/etc/apk
+      cp files/customfeeds/25.customfeeds.conf files/etc/apk/customfeeds.conf
+      echo "✅ 已复制 25.customfeeds.conf 到固件"
+  else
+      echo "⚪️ 未找到 25.customfeeds.conf，跳过"
+  fi
+
   # 添加架构优先级信息
   sed -i '1i\
   arch aarch64_generic 10\n\
