@@ -96,6 +96,7 @@ on:
 
 env:
   VERSION: ${{ inputs.luci_version }}
+  DOCKER: ${{ inputs.include_docker }}
   
 jobs:
   build:
@@ -223,7 +224,7 @@ jobs:
       - name: 🚀 上传到 Release
         uses: softprops/action-gh-release@v2.2.1
         with:
-          tag_name: ImmortalWrt-${{ env.VERSION }}-rockship-armv8-RELEASE
+          tag_name: ImmortalWrt-${{ env.VERSION }}-rockship-armv8-RELEASE-Docker ${{ env.DOCKER }}
           #name: ImmortWrt-Rockchip
           body_path: ${{ github.workspace }}/router-info.md
           overwrite: true
