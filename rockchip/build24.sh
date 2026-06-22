@@ -49,7 +49,8 @@ else
 
   # 拷贝 arm64 下所有 ipk 文件到 extra-packages 目录
   mkdir -p extra-packages
-  cp -r /tmp/store-run-repo/ipk/arm64/* extra-packages/
+  #cp -r /tmp/store-run-repo/ipk/arm64/* extra-packages/
+  cp -r /tmp/store-run-repo/ipk/{aarch64_generic,aarch64_cortex-a53}/* extra-packages/ 2>/dev/null || true
 
   echo "✅ Run files copied to extra-packages:"
   ls -lh extra-packages/*.run
