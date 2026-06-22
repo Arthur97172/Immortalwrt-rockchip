@@ -12,7 +12,7 @@ echo "Target Profile: $PROFILE"
 echo "Rootfs Size: $ROOTFS_PARTSIZE"
 echo "Include Docker: $INCLUDE_DOCKER"
 
-source shell/custom-packages.sh
+source custom-packages.sh
 echo "第三方软件包: $CUSTOM_PACKAGES"
 LOGFILE="/tmp/uci-defaults-log.txt"
 echo "Starting 99-custom.sh at $(date)" >> $LOGFILE
