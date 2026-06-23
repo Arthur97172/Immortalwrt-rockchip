@@ -161,7 +161,7 @@ jobs:
           INCLUDE_DOCKER: ${{ inputs.include_docker }}
           ROOTFS_PARTSIZE: ${{ inputs.rootfs_partsize }}
         run: |
-          bash ./build25.sh
+          bash ./build25.sh "${{ inputs.profile }}" "${{ inputs.rootfs_partsize }}"
 
       - name: 📜 生成发布说明
         run: |
