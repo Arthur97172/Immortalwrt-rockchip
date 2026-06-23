@@ -9,7 +9,7 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-aurora-config luci-theme-aurora luci-
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-theme-argon"
 
 # 网络流量监控 (bandix)
-CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-bandix luci-i18n-bandix-zh-cn"
+#CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-bandix luci-i18n-bandix-zh-cn"
 
 # clashoo代理面板 (clashoo)
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES clashoo luci-app-clashoo luci-i18n-clashoo-zh-cn"
