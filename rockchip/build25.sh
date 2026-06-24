@@ -102,41 +102,20 @@ if [ "$THIRD_PARTY_OK" = "1" ]; then
     mkdir -p thirdparty
 
     # 复制第三方 APK 到临时目录(不覆盖 base 包)
-    # 逻辑优化：优先 generic；若 generic 为空或不存在，才使用 cortex-a53
+    # rockchip/armv8 兼容 aarch64_generic 和 aarch64_cortex-a53;优先 generic
     echo "复制第三方 APK 到 thirdparty/ 目录..."
-    mkdir -p apk-merged
-
-    GENERIC_DIR="/tmp/store-repo/apk/aarch64_generic"
-    A53_DIR="/tmp/store-repo/apk/aarch64_cortex-a53"
-    COPIED=false
-
-    # 1. 首先检查并复制 aarch64_generic
-    if [ -d "$GENERIC_DIR" ] && [ -n "$(ls $GENERIC_DIR/*.apk 2>/dev/null)" ]; then
-        echo "📦 找到 aarch64_generic 软件包，正在复制..."
-        find "$GENERIC_DIR" -name '*.apk' -exec cp -t apk-merged {} + 2>/dev/null || true
-        COPIED=true
-    else
-        echo "⚪️ aarch64_generic 未找到或无 apk 文件，尝试降级到 aarch64_cortex-a53..."
+    mkdir -p apk-merged thirdparty
+    if [ -d /tmp/store-repo/apk/aarch64_generic ]; then
+        find /tmp/store-repo/apk/aarch64_generic -name '*.apk' -exec cp -t apk-merged {} + 2>/dev/null || true
     fi
 
-    # 2. 只有当 generic 没复制任何文件时，才去复制 aarch64_cortex-a53
-    if [ "$COPIED" = false ]; then
-        if [ -d "$A53_DIR" ] && [ -n "$(ls $A53_DIR/*.apk 2>/dev/null)" ]; then
-            echo "📦 找到 aarch64_cortex-a53 软件包，正在复制..."
-            find "$A53_DIR" -name '*.apk' -exec cp -t apk-merged {} + 2>/dev/null || true
-            COPIED=true
-        fi
-    fi
-
-    # 3. 验证最终复制结果
-    if [ "$COPIED" = true ] && [ -d apk-merged ] && [ -n "$(ls apk-merged/*.apk 2>/dev/null)" ]; then
+    if [ -d apk-merged ] && [ -n "$(ls apk-merged/*.apk 2>/dev/null)" ]; then
         cp apk-merged/*.apk thirdparty/ 2>/dev/null
     else
-        echo "⚠️ 未在仓库中找到任何有效的 aarch64*.apk，跳过第三方"
+        echo "⚠️ 未在仓库中找到 aarch64*/.apk,跳过第三方"
         THIRD_PARTY_OK=0
     fi
 
-    # 4. 数量统计与兜底
     APK_COUNT=$(find thirdparty -name '*.apk' 2>/dev/null | wc -l)
     echo "✅ 第三方目录现有 $APK_COUNT 个APK文件"
     if [ "$APK_COUNT" -eq 0 ]; then
