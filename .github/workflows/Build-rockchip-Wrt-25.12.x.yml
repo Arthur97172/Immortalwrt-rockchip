@@ -1,0 +1,219 @@
+name: 📦 Build-rockchip-Wrt-25.12.x.
+
+on:
+  workflow_dispatch:
+    inputs:
+      wrt_version:
+        description: "选择OpenWrt/Immortalwrt"
+        required: true
+        default: "immortalwrt"
+        type: choice
+        options:
+          - 'immortalwrt'
+          - 'openwrt'
+      luci_version:
+        description: "选择luci版本"
+        required: false
+        default: "25.12.5"
+        type: choice
+        options:
+          - '25.12.0'
+          - '25.12.1'
+          - '25.12.2'
+          - '25.12.3'
+          - '25.12.4'
+          - '25.12.5' '
+      profile:
+        type: choice
+        description: |
+          输入 软路由型号 可选值如下：
+        options:
+          - 9tripod_x3568-v4
+          - ariaboard_photonicat
+          - armsom_sige3
+          - armsom_sige7
+          - cyber_cyber3588-aib
+          - ezpro_mrkaio-m68s
+          - firefly_roc-rk3328-cc
+          - firefly_roc-rk3568-pc
+          - friendlyarm_nanopc-t4
+          - friendlyarm_nanopc-t6
+          - friendlyarm_nanopi-r2c
+          - friendlyarm_nanopi-r2c-plus
+          - friendlyarm_nanopi-r2s
+          - friendlyarm_nanopi-r3s
+          - friendlyarm_nanopi-r4s
+          - friendlyarm_nanopi-r4se
+          - friendlyarm_nanopi-r4s-enterprise
+          - friendlyarm_nanopi-r5c
+          - friendlyarm_nanopi-r5s
+          - friendlyarm_nanopi-r6c
+          - friendlyarm_nanopi-r6s
+          - huake_guangmiao-g4c
+          - linkease_easepi-r1
+          - lunzn_fastrhino-r66s
+          - lunzn_fastrhino-r68s
+          - lyt_t68m
+          - mmbox_anas3035
+          - nlnet_xiguapi-v3
+          - pine64_rock64
+          - pine64_rockpro64
+          - radxa_cm3-io
+          - radxa_e25
+          - radxa_e52c
+          - radxa_rock-3a
+          - radxa_rock-3b
+          - radxa_rock-3c
+          - radxa_rock-4c-plus
+          - radxa_rock-4se
+          - radxa_rock-5-itx
+          - radxa_rock-5a
+          - radxa_rock-5b
+          - radxa_rock-5b-plus
+          - radxa_rock-5c
+          - radxa_rock-5t
+          - radxa_rock-pi-4a
+          - radxa_rock-pi-e
+          - radxa_rock-pi-s
+          - radxa_zero-3e
+          - radxa_zero-3w
+          - sinovoip_bpi-r2-pro
+          - xunlong_orangepi-5
+          - xunlong_orangepi-5-plus
+          - xunlong_orangepi-r1-plus
+          - xunlong_orangepi-r1-plus-lts
+        required: true
+        default: 'radxa_rock-5-itx'
+      ipaddr:
+        description: "请设置软路由的管理地址(注意仅对多网口软路由有效) 格式:192.168.x.1 或 10.x.x.1"
+        required: true
+        default: "192.168.10.1"
+      rootfs_partsize:
+        description: '设置软件包大小 单位(MB)'
+        required: true
+        default: '1024'
+        type: choice
+        options:
+          - '256'
+          - '512'
+          - '1024'
+          - '2048' 
+      include_docker:
+        description: "是否集成 Docker 插件"
+        required: true
+        default: "no"
+        type: choice
+        options:
+          - 'yes'
+          - 'no'
+
+env:
+  # 判断：如果选了 immortalwrt，且版本不是 25.12.0（包含25.12.1~5），就强制降级为 25.12.0；否则保持用户选择
+  FINAL_LUCI_VER: ${{ (inputs.wrt_version == 'immortalwrt' && inputs.luci_version != '25.12.0') && '25.12.0' || inputs.luci_version }}
+  FINAL_WRT: ${{ inputs.wrt_version }}
+  ROOTFS_PARTSIZE: ${{ inputs.rootfs_partsize }}
+  DOCKER: ${{ inputs.include_docker }}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: ⚙️ 设置可执行权限
+        run: |
+          chmod +x rockchip/build25.sh
+          chmod +x rockchip/immortalwrt-repositories
+          chmod +x rockchip/openwrt-repositories   
+          chmod +x shell/*.sh
+
+      - name: 🛠️ 安装依赖
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libncurses5-dev libncursesw5-dev zstd curl unzip tree qemu-utils genisoimage
+
+      - name: ⚙️ Set custom IP config
+        run: |
+          sed -i "s/版本号/${{ env.FINAL_LUCI_VER }}/g" files/etc/uci-defaults/99-custom.sh
+          sed -i "s/__IPADDR__/${{ inputs.ipaddr }}/g" files/etc/uci-defaults/99-custom.sh
+          sed -i "s/VERXXXX/${{ env.FINAL_LUCI_VER }}/g" files/etc/uci-defaults/99-custom.sh
+          echo "✅ 配置修改完成"
+
+      - name: ⏬ 下载 ImmortalWrt ImageBuilder 25.12.x
+        run: |
+          URL="https://downloads.${{ env.FINAL_WRT }}.org/releases/${{ env.FINAL_LUCI_VER }}/targets/rockchip/armv8/${{ env.FINAL_WRT }}-imagebuilder-${{ env.FINAL_LUCI_VER }}-rockchip-armv8.Linux-x86_64.tar.zst"
+          curl -Lf -o imagebuilder.tar.zst "$URL"
+          tar --use-compress-program=unzstd -xvf imagebuilder.tar.zst
+          mv -- ${{ env.FINAL_WRT }}-imagebuilder-* imagebuilder
+          echo "✅ ImageBuilder 下载完成"
+
+      - name: 🔄 复制必备文件
+        run: |
+          cp rockchip/build25.sh imagebuilder/
+          if [ "${{ env.FINAL_WRT }}" = "openwrt" ]; then
+            cp rockchip/openwrt-repositories imagebuilder/repositories
+            cat shell/apk-openwrt-custom-packages.sh >> imagebuilder/apk-custom-packages.sh
+          else
+            cp rockchip/immortalwrt-repositories imagebuilder/repositories
+            cat shell/apk-immortalwrt-custom-packages.sh >> imagebuilder/apk-custom-packages.sh
+          fi           
+          chmod +x imagebuilder/apk-custom-packages.sh         
+          cp shell/prepare-packages.sh imagebuilder/
+          mkdir -p imagebuilder/files/etc/uci-defaults imagebuilder/files/etc/apk/repositories.d
+          cp files/etc/uci-defaults/99-custom.sh imagebuilder/files/etc/uci-defaults/
+          # 追加自定义源到 APK repositories（FIRMWARE 内 /etc/apk/repositories 会用这个）
+          cat files/customfeeds/25.customfeeds.list >> imagebuilder/files/etc/apk/repositories.d/customfeeds.list
+          echo "✅ 文件准备完成"
+
+      - name: ⚙️ 动态获取 Kmod 哈希并更新配置
+        run: |
+          BASE_URL="https://downloads.${{ env.FINAL_WRT }}.org/releases/${{ env.FINAL_LUCI_VER }}/targets/rockchip/armv8/kmods/"
+          echo "正在从 $BASE_URL 获取最新的内核哈希..."
+          KMOD_DIR=$(curl -sL $BASE_URL | grep -oE "[0-9.-]+-[a-f0-9]{32}" | head -n 1)
+          if [ -n "$KMOD_DIR" ]; then
+            FULL_KMOD_URL="${BASE_URL}${KMOD_DIR}/packages.adb"
+            echo "✅ 成功匹配 kmods 路径: $FULL_KMOD_URL"
+            # 替换 repositories 文件中的占位符
+            sed -i "s|VERSION_PLACEHOLDER|${BUILD_VER}|g" imagebuilder/repositories
+            sed -i "s|KMOD_PLACEHOLDER|${FULL_KMOD_URL}|g" imagebuilder/repositories
+          else
+            echo "❌ 无法获取 Kmod 哈希"
+            exit 1
+          fi
+          cat imagebuilder/repositories
+
+      - name: 🧱 构建 Wrt 固件
+        working-directory: ./imagebuilder
+        env:
+          INCLUDE_DOCKER: ${{ inputs.include_docker }}
+          ROOTFS_PARTSIZE: ${{ inputs.rootfs_partsize }}
+        run: |
+          bash ./build25.sh "${{ inputs.profile }}" "${{ inputs.rootfs_partsize }}"
+
+      - name: 📜 生成发布说明
+        run: |
+          cat > ${{ github.workspace }}/router-info.md <<EOF
+          ## 📡 路由器后台信息
+          📌 版本： ${{ env.FINAL_WRT }}-${{ env.FINAL_LUCI_VER }}
+          🏠 后台地址： ${{ inputs.ipaddr }}
+          👤 用户名： root
+          🔑 密码： 无
+          🐳 Docker状态： ${{ inputs.include_docker == 'yes' && '已集成' || '未集成' }}
+          EOF
+
+      - name: 🚀 上传到 Release
+        uses: softprops/action-gh-release@v2.2.1
+        with:
+          tag_name: ${{ env.FINAL_WRT }}-${{ env.FINAL_LUCI_VER }}-rockchip-armv8-RELEASE-Docker-${{ inputs.include_docker }}
+          body_path: ${{ github.workspace }}/router-info.md
+          overwrite: true
+          files: |
+            imagebuilder/bin/targets/rockchip/armv8/*squashfs-combined-efi.img.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
