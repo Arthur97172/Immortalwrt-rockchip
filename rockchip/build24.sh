@@ -3,7 +3,7 @@
 
 # --- 接收外部参数 ---
 # $1, $2 是执行脚本时后面跟着的参数
-PROFILE=${1:-"friendlyarm_nanopi-r3s"}      # 如果没传，默认 r3s
+PROFILE=${1:-"friendlyarm_nanopc-t6"}      # 如果没传，默认 r3s
 ROOTFS_PARTSIZE=${2:-"1024"}                 # 如果没传，默认 1024
 INCLUDE_DOCKER=${INCLUDE_DOCKER:-"no"}       # 通过 env 传入
 
