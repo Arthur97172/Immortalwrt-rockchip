@@ -131,7 +131,6 @@ PACKAGES="$PACKAGES kmod-mtk-t7xx"
 
 # --- 核心应用界面 ---
 PACKAGES="$PACKAGES luci luci-base luci-compat luci-mod-admin-full"
-PACKAGES="$PACKAGES luci-app-cpufreq luci-i18n-cpufreq-zh-cn"
 PACKAGES="$PACKAGES luci-app-ttyd"
 
 # LuCI 中文本地化与插件
@@ -142,7 +141,6 @@ PACKAGES="$PACKAGES luci-base luci-i18n-base-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-firewall-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-ttyd-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-upnp-zh-cn"
-PACKAGES="$PACKAGES luci-app-cpufreq luci-i18n-cpufreq-zh-cn"
 #PACKAGES="$PACKAGES luci-i18n-cifs-mount-zh-cn"
 #PACKAGES="$PACKAGES luci-i18n-unishare-zh-cn"
 #PACKAGES="$PACKAGES luci-i18n-dockerman-zh-cn"
