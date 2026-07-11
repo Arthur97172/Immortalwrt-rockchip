@@ -62,13 +62,6 @@ elif [ "$count" -gt 1 ]; then
         uci -q delete "network.$section.ports"
         for port in $lan_ifnames; do uci add_list "network.$section.ports"="$port"; done
     fi
-
-    # PPPoE 逻辑
-    if [ "$enable_pppoe" = "yes" ]; then
-        uci set network.wan.proto='pppoe'
-        uci set network.wan.username="$pppoe_account"
-        uci set network.wan.password="$pppoe_password"
-    fi
 fi
 
 # 4. LAN 静态 IP 设置 (此段会被 Workflow 的 sed 匹配并修改)
