@@ -8,6 +8,9 @@ CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-amlogic luci-i18n-amlogic-zh-cn"
 # argon主题 (argon)
 CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-theme-argon"
 
+# material (material)
+CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-theme-material"
+
 # aurora主题 (aurora)
 #CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-aurora-config luci-theme-aurora luci-i18n-aurora-config-zh-cn"
 
